@@ -27,7 +27,7 @@ public class GameController : Controller {
     }
 
     public IActionResult Create() {
-        return View( new Games() );
+        return View();
     }
 
     [HttpPost]
@@ -49,9 +49,9 @@ public class GameController : Controller {
         return RedirectToAction( "Index" );
     }
 
-    public IActionResult Edit() {
+    public IActionResult Edit(int id) {
 
-        return View( new Games() );
+        return View( _gameService.GetById(id) );
     }
 
     [HttpPost]
