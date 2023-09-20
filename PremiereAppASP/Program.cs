@@ -1,11 +1,15 @@
 using PremiereAppASP.Services;
+using System.Data;
+using System.Data.SqlClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add services to the container.s
 builder.Services.AddControllersWithViews();
 //builder.Services.AddSingleton<GameService>( );
-builder.Services.AddScoped<GameDbService>();
+builder.Services.AddTransient<IDbConnection>(pc => new SqlConnection(builder.Configuration.GetConnectionString("default")));
+builder.Services.AddScoped<IGameDbService, GameDbService>();
+
 
 var app = builder.Build();
 
