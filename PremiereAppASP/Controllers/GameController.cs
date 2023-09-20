@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PremiereAppASP.Models;
-using PremiereAppASP.Models.Services;
+using PremiereAppASP.Services;
 using System.Diagnostics;
 
 public class GameController : Controller {
 
     //private readonly ILogger<GameController> _logger;
 
-    private GameService _gameService;
+    private readonly GameDbService _gameDbService;
 
-    public GameController( GameService gameService ) {
-        _gameService = gameService;
+    public GameController( GameDbService gameDbService ) {
+        _gameDbService = gameDbService;
     }
 
 
@@ -19,11 +19,11 @@ public class GameController : Controller {
     //}
 
     public IActionResult Index() {
-        return View( _gameService.GetGames() );
+        return View( _gameDbService.GetGames() );
     }
 
     public IActionResult Details( int id ) {
-        return View( _gameService.GetById( id ) );
+        return View( _gameDbService.GetById( id ) );
     }
 
     public IActionResult Create() {
@@ -35,7 +35,7 @@ public class GameController : Controller {
 
         if( g != null ) {
 
-            _gameService.CreateGame( _gameService.GetGames().Max( g => g.Id ) + 1, g );
+            _gameDbService.CreateGame(g);
         }
         return RedirectToAction( "Index" );
     }
@@ -44,14 +44,14 @@ public class GameController : Controller {
 
         if( id != null ) {
 
-            _gameService.DeleteGame( (int)id );
+            _gameDbService.DeleteGame( (int)id );
         }
         return RedirectToAction( "Index" );
     }
 
-    public IActionResult Edit(int id) {
+    public IActionResult Edit( int id ) {
 
-        return View( _gameService.GetById(id) );
+        return View( _gameDbService.GetById( id ) );
     }
 
     [HttpPost]
@@ -59,7 +59,7 @@ public class GameController : Controller {
 
         if( g != null ) {
 
-            _gameService.UpdateGame( g );
+            _gameDbService.UpdateGame( g );
         }
 
         return RedirectToAction( "Index" );

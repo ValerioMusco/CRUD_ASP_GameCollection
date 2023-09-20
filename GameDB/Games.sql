@@ -1,0 +1,8 @@
+﻿CREATE TABLE [dbo].[Games]
+(
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY,
+	[Title] NVARCHAR(100) NOT NULL,
+	[Description] NVARCHAR(200),
+	[Genre] NVARCHAR(100) NOT NULL,
+	[ReleaseDate] DATETIME2 NOT NULL
+)

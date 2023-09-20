@@ -6,12 +6,15 @@ namespace PremiereAppASP.Models {
         [ScaffoldColumn(false)]
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         public string Genre { get; set; }
         public DateTime ReleaseDate { get; set; }
 
-        public Games(){ }
+        public Games(){
+            Name = "";
+            Genre = "";
+        }
 
         public Games( string name, string description, string genre, DateTime releaseDate, int id = 0 ) {
             Id = id;
@@ -19,7 +22,6 @@ namespace PremiereAppASP.Models {
             Description = description;
             Genre = genre;
             ReleaseDate = releaseDate;
-            ;
         }
     }
 }

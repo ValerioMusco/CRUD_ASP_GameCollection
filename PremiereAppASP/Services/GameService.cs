@@ -1,9 +1,14 @@
-﻿namespace PremiereAppASP.Models.Services {
-    public class GameService {
+﻿using PremiereAppASP.Models;
+
+namespace PremiereAppASP.Services
+{
+    public class GameService
+    {
 
         private List<Games> Games { get; set; }
 
-        public GameService() {
+        public GameService()
+        {
             Games = new(){
                 new( "lol", "un jeu de merde", "moba", DateTime.Parse("2001-1-1"), 0),
                 new( "cod", "un deuxième jeu de merde", "fps" ,DateTime.Parse("2002-2-2"), 1),
@@ -13,33 +18,38 @@
             };
         }
 
-        public List<Games> GetGames() {
+        public List<Games> GetGames()
+        {
             return Games;
         }
 
-        public Games GetById( int id ) {
-            return Games.FirstOrDefault( g => g.Id == id );
+        public Games GetById(int id)
+        {
+            return Games.FirstOrDefault(g => g.Id == id) ?? new();
         }
 
-        public void CreateGame(int count, Games g) {
+        public void CreateGame(int count, Games g)
+        {
 
-            Games.Add( new Games(
+            Games.Add(new Games(
                 g.Name,
-                g.Description,
+                g.Description ?? "",
                 g.Genre,
                 g.ReleaseDate,
                 count
-            ) );
+            ));
         }
 
-        public void DeleteGame(int id) {
+        public void DeleteGame(int id)
+        {
 
             Games.Remove(GetById(id));
         }
 
-        public void UpdateGame(Games newGame ) {
+        public void UpdateGame(Games newGame)
+        {
 
-            Games gameToUpdate = Games.FirstOrDefault(g => g.Id == newGame.Id);
+            Games gameToUpdate = Games.FirstOrDefault( g => g.Id == newGame.Id ) ?? new();
             gameToUpdate.Name = newGame.Name;
             gameToUpdate.Description = newGame.Description;
             gameToUpdate.Genre = newGame.Genre;
