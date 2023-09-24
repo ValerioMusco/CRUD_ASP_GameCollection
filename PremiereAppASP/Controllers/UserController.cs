@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BC = BCrypt.Net.BCrypt;
+using Microsoft.AspNetCore.Mvc;
 using PremiereAppASP.Models.Mappers;
 using PremiereAppASP.Services;
 
@@ -13,8 +14,7 @@ namespace PremiereAppASP.Controllers {
 
         public IActionResult Index() {
 
-            bool created = TempData["UserCreated"] as bool? ?? false;
-            return View(created);
+            return View();
         }
 
         public IActionResult Register() {
@@ -30,6 +30,29 @@ namespace PremiereAppASP.Controllers {
 
         public IActionResult Login() {
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult Login(UserFormLogging logging) {
+
+
+            try {
+
+                if( BC.Verify( logging.Password, _userService.GetPassword( logging ) ) ) {
+
+                    TempData["Logged"] = true;
+                    return RedirectToAction( "Index" );
+                }
+                else
+                    logging.ErrorMessage = "Identifiant incorrect";
+            }
+            catch(Exception ex) {
+
+                logging.ErrorMessage = "Identifiant introuvable";
+            }
+            
+            return View(logging);
+
         }
     }
 }

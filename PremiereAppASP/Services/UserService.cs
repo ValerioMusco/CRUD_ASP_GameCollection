@@ -53,5 +53,26 @@ namespace PremiereAppASP.Services {
         UserFormRegister IGenericService<UserFormRegister, int>.GetById( int Id ) {
             throw new NotImplementedException();
         }
+
+        public string GetPassword(UserFormLogging logging) {
+
+            using( IDbCommand dbCommand = _connection.CreateCommand() ) {
+
+                dbCommand.CommandText = $"SELECT Password FROM Users " +
+                                        $"WHERE Username = @Username";
+
+                GenerateParameter( dbCommand, "Username", logging.Username ); 
+                
+                CheckOpenConnection(_connection );
+                _connection.Open();
+
+                IDataReader reader = dbCommand.ExecuteReader();
+
+                if( !reader.Read() )
+                    throw new Exception( "Erreur" );
+
+                return reader.GetString( 0 );
+            }
+        }
     }
 }
