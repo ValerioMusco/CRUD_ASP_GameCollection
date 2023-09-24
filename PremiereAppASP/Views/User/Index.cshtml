@@ -1,0 +1,19 @@
+﻿@model bool
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    @if( Model ) {
+
+        <p>L'utilisateur à été créé avec succès.</p>
+    }
+    else {
+
+        <p>Erreur lors de la création.</p>
+    }
+
+</div>

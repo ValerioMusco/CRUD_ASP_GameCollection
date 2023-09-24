@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="Games.sql" />
+    <Build Include="Users.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="GameDB.publish.xml" />

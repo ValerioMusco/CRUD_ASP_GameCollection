@@ -3,23 +3,12 @@ using System.Data;
 using System.Data.SqlClient;
 
 namespace PremiereAppASP.Services {
-    public class GameDbService : IGameDbService {
+    public class GameDbService : GenericService<Games, int>, IGameDbService {
 
-        private readonly List<Games> _games;
-        private readonly IDbConnection _connection;
-
-        //public GameDbService(IConfiguration config) {
-        //    _games = new();
-        //    _connection = new SqlConnection( config.GetConnectionString( "default" ) );
-        //}
-
-        public GameDbService(IDbConnection dbConnection)
-        {
-            _connection = dbConnection;
-            _games = new();
+        public GameDbService( IDbConnection dbConnection ) : base( dbConnection, "Games", "Id" ) {
         }
 
-        protected Games Convert( IDataRecord dataRecord ) {
+        protected override Games Convert( IDataRecord dataRecord ) {
 
             return new Games {
 
@@ -31,15 +20,7 @@ namespace PremiereAppASP.Services {
             };
         }
 
-        protected void GenerateParameter( IDbCommand dbCommand, string parameterName, object? value ) {
-
-            IDataParameter parameter = dbCommand.CreateParameter();
-            parameter.ParameterName = parameterName;
-            parameter.Value = value ?? DBNull.Value;
-            dbCommand.Parameters.Add( parameter );
-        }
-
-        public void CreateGame( Games game ) {
+        public bool Create( Games game ) {
 
             using( IDbCommand dbCommand = _connection.CreateCommand() ) {
 
@@ -51,82 +32,32 @@ namespace PremiereAppASP.Services {
                 GenerateParameter( dbCommand, "GameGenre", game.Genre );
                 GenerateParameter( dbCommand, "GameReleaseDate", game.ReleaseDate );
 
+                CheckOpenConnection( _connection );
                 _connection.Open();
-                dbCommand.ExecuteNonQuery();
-                _connection.Close();
+                return dbCommand.ExecuteNonQuery() == 1;
             }
         }
 
-        public Games GetById( int id ) {
+        public bool Update( Games newGame ) {
+            
+            using( IDbCommand dbCommand = _connection.CreateCommand()) {
+                
+                dbCommand.CommandText = $"UPDATE Games SET " +
+                                        $"Title = @newTitle, " +
+                                        $"Description = @newDescription, " +
+                                        $"Genre = @newGenre, " +
+                                        $"ReleaseDate = @newReleaseDate " +
+                                        $"WHERE Id = @gameId";
 
-            using( IDbCommand dbCommand = _connection.CreateCommand() ) {
-
-                dbCommand.CommandText = "SELECT * FROM Games WHERE Id = @id";
-
-                GenerateParameter( dbCommand, "id", id );
-
-                _connection.Open();
-                IDataReader reader = dbCommand.ExecuteReader();
-
-                if( reader.Read() )
-                    return Convert( reader );
-                else
-                    return new();
-            }
-
-        }
-
-        public List<Games> GetGames() {
-
-            using( IDbCommand dbCommand = _connection.CreateCommand() ) {
-
-                dbCommand.CommandText = "SELECT * FROM Games";
-
-                _connection.Open();
-                IDataReader reader = dbCommand.ExecuteReader();
-
-                while( reader.Read() )
-                    _games.Add( Convert( reader ) );
-
-                _connection.Close();
-            }
-
-            return _games;
-        }
-
-        public void UpdateGame( Games newGame ) {
-
-            using( IDbCommand dbCommand = _connection.CreateCommand() ) {
-
-                dbCommand.CommandText = "UPDATE Games SET " +
-                                        "Title = @newName, " +
-                                        "Description = @newDescription, " +
-                                        "Genre = @newGenre, " +
-                                        "ReleaseDate = @newReleaseDate " +
-                                        "WHERE Id = @id";
-
-                GenerateParameter( dbCommand, "newName", newGame.Name );
+                GenerateParameter( dbCommand, "newTitle", newGame.Name );
                 GenerateParameter( dbCommand, "newDescription", newGame.Description );
                 GenerateParameter( dbCommand, "newGenre", newGame.Genre );
                 GenerateParameter( dbCommand, "newReleaseDate", newGame.ReleaseDate );
-                GenerateParameter( dbCommand, "id", newGame.Id );
+                GenerateParameter( dbCommand, "gameId", newGame.Id );
 
+                CheckOpenConnection( _connection );
                 _connection.Open();
-                dbCommand.ExecuteNonQuery();
-                _connection.Close();
-            }
-        }
-
-        public void DeleteGame( int id ) {
-
-            using( IDbCommand dbCommand = _connection.CreateCommand() ) {
-
-                dbCommand.CommandText = "DELETE FROM Games WHERE Id = @id";
-
-                GenerateParameter( dbCommand, "id", id );
-                _connection.Open();
-                dbCommand.ExecuteNonQuery();
-                _connection.Close();
+                return dbCommand.ExecuteNonQuery() == 1;
             }
         }
     }

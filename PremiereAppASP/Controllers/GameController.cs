@@ -21,7 +21,7 @@ namespace PremiereAppASP.Controllers {
         //}
 
         public IActionResult Index() {
-            return View( _gameDbService.GetGames() );
+            return View( _gameDbService.GetAll() );
         }
 
         public IActionResult Details( int id ) {
@@ -35,23 +35,20 @@ namespace PremiereAppASP.Controllers {
         [HttpPost]
         public IActionResult Create( Games g ) {
 
-            if( g != null ) {
-
-                _gameDbService.CreateGame( g );
-            }
+            if( g != null )
+                _gameDbService.Create( g );
             return RedirectToAction( "Index" );
         }
 
         public IActionResult Delete( int? id ) {
 
-            if( id != null ) {
-
-                _gameDbService.DeleteGame( (int)id );
-            }
+            if( id != null )
+                _gameDbService.Delete( (int)id );
             return RedirectToAction( "Index" );
         }
 
         public IActionResult Edit( int id ) {
+
 
             return View( _gameDbService.GetById( id ) );
         }
@@ -59,10 +56,8 @@ namespace PremiereAppASP.Controllers {
         [HttpPost]
         public IActionResult Edit( Games g ) {
 
-            if( g != null ) {
-
-                _gameDbService.UpdateGame( g );
-            }
+            if( g != null )
+                _gameDbService.Update( g );
 
             return RedirectToAction( "Index" );
         }
