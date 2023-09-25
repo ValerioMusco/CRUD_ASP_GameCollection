@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.s
 builder.Services.AddControllersWithViews();
-builder.Services.AddTransient<IDbConnection>(pc => new SqlConnection(builder.Configuration.GetConnectionString("default")));
+builder.Services.AddTransient<IDbConnection>(pc => new SqlConnection(builder.Configuration.GetConnectionString("Techni")));
 builder.Services.AddScoped<IGameDbService, GameDbService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
