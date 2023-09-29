@@ -1,25 +1,20 @@
 ﻿@{
     ViewData["Title"] = "Index";
 
-    bool userCreated = TempData["UserCreated"] as bool? ?? false;
-    bool userLogged = TempData["Logged"] as bool? ?? false;
+    bool userCreated = ViewData["UserCreated"] as bool? ?? false;
 }
 
 <h1>Index</h1>
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    @if( userCreated && !userLogged) {
+    @if( userCreated) {
 
         <p>L'utilisateur à été créé avec succès.</p>
     }
-    else if(userLogged && !userCreated) {
+    else {
 
-        <p>Vous êtes connecté</p>
-    }
-    else{
-
-        <p>Erreur de la création de l'utilisateur</p>
+        <p>Bienvenue !</p>
     }
 
 </div>

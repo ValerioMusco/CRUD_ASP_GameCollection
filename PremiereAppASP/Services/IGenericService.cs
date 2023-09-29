@@ -4,5 +4,6 @@
         T GetById( U Id );
         IEnumerable<T> GetAll( );
         bool Delete ( U Id );
+
     }
 }

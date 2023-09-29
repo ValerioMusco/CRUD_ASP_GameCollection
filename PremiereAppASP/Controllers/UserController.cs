@@ -2,14 +2,19 @@
 using Microsoft.AspNetCore.Mvc;
 using PremiereAppASP.Models.Mappers;
 using PremiereAppASP.Services;
+using PremiereAppASP.Models;
+using Newtonsoft.Json;
+using PremiereAppASP.Tools;
 
 namespace PremiereAppASP.Controllers {
     public class UserController : Controller {
 
         private readonly IUserService _userService;
+        private readonly SessionManager _sessionManager;
 
-        public UserController(IUserService userService){
+        public UserController( IUserService userService, SessionManager sessionManager){
             _userService = userService;
+            _sessionManager = sessionManager;
         }
 
         public IActionResult Index() {
@@ -24,7 +29,7 @@ namespace PremiereAppASP.Controllers {
         [HttpPost]
         public IActionResult Register( UserFormRegister newUser ) {
 
-            TempData["UserCreated"] = _userService.Create( newUser );
+            ViewData["UserCreated"] = _userService.Create( newUser );
             return RedirectToAction( "Index" );
         }
 
@@ -40,8 +45,9 @@ namespace PremiereAppASP.Controllers {
 
                 if( BC.Verify( logging.Password, _userService.GetPassword( logging ) ) ) {
 
-                    TempData["Logged"] = true;
-                    return RedirectToAction( "Index" );
+                    User connectedUser = _userService.Login(logging.Username);
+                    _sessionManager.ConnecterUser = connectedUser;
+                    return RedirectToAction( "Index", "Game" );
                 }
                 else
                     logging.ErrorMessage = "Identifiant incorrect";
@@ -53,6 +59,12 @@ namespace PremiereAppASP.Controllers {
             
             return View(logging);
 
+        }
+
+        public IActionResult Logout() {
+
+            _sessionManager.Logout();
+            return RedirectToAction( "Index", "Game" );
         }
     }
 }

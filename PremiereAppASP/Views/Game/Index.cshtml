@@ -1,4 +1,6 @@
-﻿@model IEnumerable<PremiereAppASP.Models.Games>
+﻿@using PremiereAppASP.Tools;
+@inject SessionManager session;
+@model IEnumerable<PremiereAppASP.Models.Games>
 
 @{
     ViewData["Title"] = "Index";
@@ -7,7 +9,10 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    @if(session.ConnecterUser is not null ) {
+        <p>Bonjour @session.ConnecterUser.Username</p>
+        <a asp-action="Create">Create New</a>
+    }
 </p>
 <table class="table">
     <thead>
@@ -43,9 +48,14 @@
                 @Html.DisplayFor(modelItem => item.ReleaseDate)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-                @Html.ActionLink("Details", "Details", new {  id=item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+                @Html.ActionLink("Details", "Details", new {  id=item.Id })
+                @if(session.ConnecterUser is not null ) {
+                        
+                    <span>
+                        | @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+                    </span>
+                    @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+                }
             </td>
         </tr>
 }

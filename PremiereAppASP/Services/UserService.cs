@@ -3,6 +3,7 @@ using PremiereAppASP.Enums;
 using PremiereAppASP.Models;
 using PremiereAppASP.Models.Mappers;
 using System.Data;
+using Newtonsoft.Json.Linq;
 
 namespace PremiereAppASP.Services {
     public class UserService : GenericService<User, int>, IUserService {
@@ -11,7 +12,15 @@ namespace PremiereAppASP.Services {
         }
 
         protected override User Convert( IDataRecord dataRecord ) {
-            throw new NotImplementedException();
+
+            return new User {
+
+                Id = (int)dataRecord["Id"],
+                Username = (string)dataRecord["Username"],
+                Password = (string)dataRecord["Password"],
+                Email = (string)dataRecord["Mail"],
+                Privileges = Enum.Parse<Privileges>((string)dataRecord["Privileges"])
+            };
         }
 
         public bool Create( UserFormRegister userFormRegister ) {
@@ -72,6 +81,26 @@ namespace PremiereAppASP.Services {
                     throw new Exception( "Erreur" );
 
                 return reader.GetString( 0 );
+            }
+        }
+
+        public User Login( string nickname ) {
+
+            using( IDbCommand dbCommand = _connection.CreateCommand() ) {
+
+                dbCommand.CommandText = $"SELECT * FROM Users " +
+                                        $"WHERE Username = @value";
+                GenerateParameter( dbCommand, "value", nickname);
+
+                CheckOpenConnection( _connection );
+                _connection.Open();
+
+                IDataReader reader = dbCommand.ExecuteReader();
+
+                if( !reader.Read() )
+                    throw new Exception( "Error" );
+
+                return Convert( reader );
             }
         }
     }
